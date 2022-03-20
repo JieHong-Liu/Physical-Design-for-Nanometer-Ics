@@ -16,8 +16,8 @@ public:
         _cutSize(0), _netNum(0), _cellNum(0), _maxPinNum(0), _bFactor(0),
         _accGain(0), _maxAccGain(0), _iterNum(0) {
         parseInput(inFile);
-//        _partSize[0] = 0;
-//        _partSize[1] = 0;
+        _partSize[0] = 0;
+        _partSize[1] = 0;
     }
     ~Partitioner() {
         clear();
@@ -70,11 +70,20 @@ private:
     // FM
     void FM();
     void initialCellGains();
+    void constructBucketList();
     // calculate the from block and to block
     int From(Net* n, Cell* c);
     int To(Net* n, Cell* c);
     // balanced
-    bool balanced(Cell* c);
+    bool balanced(Cell* candidate);
+    Cell* selectCell();
+    // Update Cell Gains.
+    void UpdateGain(Cell* baseCell);
+    void UpdateBucketList(Cell* baseCell,int newGain);
+    // report.
+    void reportBucketList();
+    void reportGainList();
+
 };
 
 #endif  // PARTITIONER_H

@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     argc = 3;
     if (argc == 3)
     {
-        input.open("input_test.dat", ios::in);
+        input.open("C:/Users/jieho/Documents/coding/PD/Physical-Design-for-Nanometer-Ics/input_test.dat", ios::in);
         output.open("output_0.dat",ios::out);
         //input.open(argv[1], ios::in);
         //output.open(argv[2], ios::out);
