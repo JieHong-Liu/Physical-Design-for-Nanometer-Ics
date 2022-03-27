@@ -263,27 +263,45 @@ void Partitioner::FM()
 {
     bool first = true;
     _iterNum = 0;
-    do
-    {
-        if (!first)
-        {
-            initialPartitionParams();
-        }
-        else
-        {
-            first = false;
-        }
-        Cell* candidate = selectCell();    // choose the first cell with maximum gain.
-        while (candidate != NULL)   // first iteration;
-        {
-            UpdateGain(candidate);
-            //reportBucketList();
-            candidate = selectCell();
-        }
-        backToBest();
-        cout <<"max acc gain:" <<_maxAccGain << endl;
-        _iterNum++;
-    } while (_maxAccGain > 0);
+    
+    if(_cellNum > 350000)
+    { // do once only
+      Cell* candidate = selectCell();    // choose the first cell with maximum gain.
+      while (candidate != NULL)   // first iteration;
+      {
+          UpdateGain(candidate);
+          //reportBucketList();
+          candidate = selectCell();
+      }
+      backToBest();
+      cout <<"max acc gain:" <<_maxAccGain << endl;
+      _iterNum++;
+    }
+    
+    else{
+      do
+      {
+          if (!first)
+          {
+              initialPartitionParams();
+              initialCellGains();
+          }
+          else
+          {
+              first = false;
+          }
+          Cell* candidate = selectCell();    // choose the first cell with maximum gain.
+          while (candidate != NULL)   // first iteration;
+          {
+              UpdateGain(candidate);
+              //reportBucketList();
+              candidate = selectCell();
+          }
+          backToBest();
+          cout <<"max acc gain:" <<_maxAccGain << endl;
+          _iterNum++;
+      } while (_maxAccGain > 0);
+    }
 }
 
 void Partitioner::backToBest()
@@ -303,9 +321,16 @@ void Partitioner::backToBest()
     {
         int throwCellId = _moveStack[i];
         Cell* throwCell = _cellArray[throwCellId];
+        vector<int> tmpNetList = throwCell->getNetList();
+        for(int j = 0 ;j < tmpNetList.size(); j++)
+        {
+        		_netArray[tmpNetList[j]]->decPartCount(throwCell->getPart());
+        		_netArray[tmpNetList[j]]->incPartCount(!throwCell->getPart());
+        	}	
         _partSize[throwCell->getPart()]--;
         _partSize[!throwCell->getPart()]++;
         throwCell->move();
+    	
     }
     _cutSize = _cutSize - _maxAccGain;
 
@@ -315,6 +340,7 @@ void Partitioner::backToBest()
         _cellArray[i]->unlock();
         _cellArray[i]->setGain(0);
     }
+    
 }
 
 void Partitioner::initialPartitionParams()
