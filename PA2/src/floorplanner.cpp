@@ -14,10 +14,13 @@ void Floorplanner::floorplan(fstream& output)
 	// construct the bstar tree.
 	BstarTree* bstartree = new BstarTree;
 	treePacking(bstartree); // initialize the complete binary tree.
-	SA(bstartree);
-
-
-	// Applied Fast Simulated Annealing.
+	tree2floorplan(bstartree);  
+	calculateTreeCost(bstartree);
+ 
+//  SA(bstartree);
+  
+  
+  // Applied Fast Simulated Annealing.
 	printSummary(bstartree);
   outputReport(output);
 }
@@ -83,6 +86,8 @@ void Floorplanner::SA(BstarTree* bstartree)
 			int operation = rand() % 4;
 			switch (operation)
 			{
+      case -1:
+         break;
 			case 0: // rotate a block.
 			{
 				// cout << "rotation!!!" << endl;
@@ -204,7 +209,8 @@ void Floorplanner::SA(BstarTree* bstartree)
 				assert(false);
 			}
 			if (cmpWithLocalOptimum()) saveCurrent2Optimum();
-		}
+		  clearContours();
+    }
 
 	}
 #endif
@@ -925,4 +931,6 @@ void Floorplanner::clearContours()
 		c = c->getNext();
 		delete deleteC;
 	}
+  Contour* tmp = new Contour(0, OUTLINEINF, 0);
+  dummy->setNext(tmp);
 }
