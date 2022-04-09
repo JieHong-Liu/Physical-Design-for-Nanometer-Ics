@@ -79,8 +79,8 @@ public:
 		parse_blk(input_blk);
 		parse_net(input_Net);
 	}
-	void floorplan();
-
+	void floorplan(fstream& output);
+  void outputReport(fstream& output);
 	// tree related;
 	void treePacking(BstarTree* bstartree);
 	void insertNode2BstarTree(BstarTree* tree, Block* blk);

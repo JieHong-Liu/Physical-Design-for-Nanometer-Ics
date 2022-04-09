@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     output.open("output.rpt", ios::out);
 #endif
     Floorplanner* fp = new Floorplanner(input_blk, input_net, output, alpha);
-    fp->floorplan();
+    fp->floorplan(output);
 
     return 0;
 }

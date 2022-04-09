@@ -6,7 +6,7 @@
 #include <string>
 using namespace std;
 #define OUTLINEINF 99999
-void Floorplanner::floorplan()
+void Floorplanner::floorplan(fstream& output)
 {
 	srand(time(NULL));
 	const clock_t begin_time = clock();
@@ -19,6 +19,7 @@ void Floorplanner::floorplan()
 
 	// Applied Fast Simulated Annealing.
 	printSummary(bstartree);
+  outputReport(output);
 }
 
 double Floorplanner::getCostSA()
@@ -522,9 +523,21 @@ void Floorplanner::printSummary(BstarTree* tree)
 	}
 	cout << "===================================" << endl << endl;
 
-
 }
 
+
+void Floorplanner::outputReport(fstream& output)
+{
+	output <<  _optCost << endl;
+	output <<  _optWireLength << endl;
+	output <<  _optArea << endl;
+	output <<  _optChipWidth << " " << _optChipHeight << endl;
+	output << double(clock() - _startTime) / CLOCKS_PER_SEC << endl;
+	for (int i = 0; i < _optBlkList.size(); i++)
+	{
+     	output << _optBlkList[i]->getName() << "\t" << _optBlkList[i]->getX1() << "\t" << _optBlkList[i]->getY1() << "\t" << _optBlkList[i]->getX2() << "\t" << _optBlkList[i]->getY2() << endl;
+	}
+}
 
 void Floorplanner::calculateTreeCost(BstarTree* tree)
 {
