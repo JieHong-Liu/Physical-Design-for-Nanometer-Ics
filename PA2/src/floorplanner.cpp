@@ -779,7 +779,7 @@ void Floorplanner::packingNode2Floorplan(Contour* dummy, Node* current, BstarTre
 {
 	Contour* tmp1;
 	Contour* tmp2;
-	// cout << "packing now: "<< current->getBlock()->getName() << endl;
+	cout << "packing now: "<< current->getBlock()->getName();
 	if (current == tree->getRoot())
 	{
 		current->getBlock()->setPos(0, 0, current->getBlock()->getWidth(), current->getBlock()->getHeight());
@@ -795,9 +795,10 @@ void Floorplanner::packingNode2Floorplan(Contour* dummy, Node* current, BstarTre
 		int nowY1 = 0;
 		// nowY1 = the maximum y of [nowx1,nowX2)
 		Contour* findY = dummy;
+		cout << "\t "<< nowX1 << " " << nowX2 << endl <<"show find Y: " << endl;
 		while (findY != NULL)
 		{
-			if (nowX1 >= findY->getStartX() && nowX1 < findY->getEndX() || nowX2 > findY->getStartX() && nowX2 < findY->getEndX())
+			if ( (nowX1 >= findY->getStartX() && nowX2 <= findY->getEndX()) || ( nowX1 <= findY->getStartX() && nowX2 > findY->getEndX()) || (nowX2 > findY->getStartX() && nowX2 < findY->getEndX()))
 			{
 				if (findY->getY() > nowY1)
 				{
@@ -852,9 +853,10 @@ void Floorplanner::packingNode2Floorplan(Contour* dummy, Node* current, BstarTre
 		int nowY1 = 0;
 		// nowY1 = the maximum y of [nowx1,nowX2)
 		Contour* findY = dummy;
+		cout << "\t "<< nowX1 << " " << nowX2 << endl <<"show find Y: " << endl;
 		while (findY != NULL)
 		{
-			if (nowX1 >= findY->getStartX() && nowX1 < findY->getEndX() || nowX2 > findY->getStartX() && nowX2 < findY->getEndX())
+			if ((nowX1 >= findY->getStartX() && nowX2 <= findY->getEndX()) ||( nowX1 <= findY->getStartX() && nowX2 > findY->getEndX()) || (nowX2 > findY->getStartX() && nowX2 < findY->getEndX()))
 			{
 				if (findY->getY() > nowY1)
 				{
@@ -906,7 +908,7 @@ void Floorplanner::packingNode2Floorplan(Contour* dummy, Node* current, BstarTre
 			tmpNode = tmpNode->getNext();
 		}
 	}
-	// reportContour(dummy);
+	reportContour(dummy);
 	if (current->getLeftChild() != NULL)
 	{
 		packingNode2Floorplan(dummy, current->getLeftChild(), tree);
