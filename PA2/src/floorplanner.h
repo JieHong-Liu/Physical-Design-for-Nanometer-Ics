@@ -76,6 +76,9 @@ class Floorplanner
 public:
 	Floorplanner(fstream& input_blk, fstream& input_Net, fstream& output, double alpha) : _alpha(alpha)
 	{
+		_accumArea = 0;
+		_accumWireLength = 0;
+		_accumTime = 0;
 		parse_blk(input_blk);
 		parse_net(input_Net);
 	}
@@ -147,7 +150,12 @@ private:
 	double _costSA;
 	bool _passOutline;
 
+	double _accumArea; // for calculate normalize.
+	double _accumWireLength;
+	double _accumTime;
+	
 	double _optCost;
+	double _optCostSA;
 	double _optArea;
 	double _optChipWidth;
 	double _optChipHeight;

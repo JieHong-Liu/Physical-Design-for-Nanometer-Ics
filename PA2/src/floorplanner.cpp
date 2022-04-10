@@ -30,9 +30,18 @@ double Floorplanner::getCostSA()
 	double costSA = 0;
 	calcWireLength();
 	calcFloorplanArea();
+	
+	_accumWireLength += getWireLength();
+	_accumArea += getArea();
+	_accumTime += 1;
+
+	double Anorm = _accumArea / _accumTime;
+	double Wnorm = _accumWireLength / _accumTime;
+
 	_aspectRatio = _outlineHeight / _outlineWidth;
 	_ratio = getChipHeight() / getChipWidth();
-	costSA = _alpha * getArea() + (0.1) * getWireLength() + (1 - _alpha) * (_aspectRatio - _ratio) * (_aspectRatio - _ratio);
+	double beta = 0.5;
+	costSA = beta *( _alpha * (getArea()/Anorm) + (1-_alpha) * (getWireLength()/Wnorm) )+ (1 - beta) * (_aspectRatio - _ratio) * (_aspectRatio - _ratio);
 	return costSA;
 }
 
@@ -50,6 +59,7 @@ void Floorplanner::saveCurrent2Optimum()
 	_optPassOutline = pass;
 	_optArea = getArea();
 	_optCost = getCost();
+	_optCostSA = getCostSA();
 	_optChipWidth = getChipWidth();
 	_optChipHeight = getChipHeight();
 	_optWireLength = getWireLength();
@@ -471,7 +481,7 @@ bool Floorplanner::cmpWithLocalOptimum()
 	{
 		_passOutline = false;
 	}
-	if (_passOutline == true && getCost() < _optCost)
+	if (_passOutline == true &&  getCostSA() < _optCostSA)
 	{
 		return true;
 	}
