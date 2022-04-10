@@ -14,10 +14,10 @@ void Floorplanner::floorplan(fstream& output)
 	// construct the bstar tree.
 	BstarTree* bstartree = new BstarTree;
 	treePacking(bstartree); // initialize the complete binary tree.
-	tree2floorplan(bstartree);  
-	calculateTreeCost(bstartree);
+//	tree2floorplan(bstartree);  
+//	calculateTreeCost(bstartree);
  
-//  SA(bstartree);
+  SA(bstartree);
   
   
   // Applied Fast Simulated Annealing.
@@ -32,7 +32,7 @@ double Floorplanner::getCostSA()
 	calcFloorplanArea();
 	_aspectRatio = _outlineHeight / _outlineWidth;
 	_ratio = getChipHeight() / getChipWidth();
-	costSA = _alpha * getArea() + (0.1) * getWireLength() + (1 - 0.1 - _alpha) * (_aspectRatio - _ratio) * (_aspectRatio - _ratio);
+	costSA = _alpha * getArea() + (0.1) * getWireLength() + (1 - _alpha) * (_aspectRatio - _ratio) * (_aspectRatio - _ratio);
 	return costSA;
 }
 
@@ -73,9 +73,9 @@ void Floorplanner::SA(BstarTree* bstartree)
 	for (double temperature = 1000; temperature >= 1; temperature = temperature * 0.95)		// while not yet frozen
 	{
 		double P = 0;
-		if (temperature > 100) P = 500;
+		if (temperature > 100) P = 1000;
 		else if (temperature > 50) P = 1000;
-		else P = 500;
+		else P = 1000;
 
 		for (int i = 0; i < P; i++) // do P times iteration.
 		{
@@ -209,7 +209,7 @@ void Floorplanner::SA(BstarTree* bstartree)
 				assert(false);
 			}
 			if (cmpWithLocalOptimum()) saveCurrent2Optimum();
-		  clearContours();
+		 // clearContours();
     }
 
 	}
@@ -779,7 +779,7 @@ void Floorplanner::packingNode2Floorplan(Contour* dummy, Node* current, BstarTre
 {
 	Contour* tmp1;
 	Contour* tmp2;
-	cout << "packing now: "<< current->getBlock()->getName();
+//	cout << "packing now: "<< current->getBlock()->getName();
 	if (current == tree->getRoot())
 	{
 		current->getBlock()->setPos(0, 0, current->getBlock()->getWidth(), current->getBlock()->getHeight());
@@ -795,10 +795,10 @@ void Floorplanner::packingNode2Floorplan(Contour* dummy, Node* current, BstarTre
 		int nowY1 = 0;
 		// nowY1 = the maximum y of [nowx1,nowX2)
 		Contour* findY = dummy;
-		cout << "\t "<< nowX1 << " " << nowX2 << endl <<"show find Y: " << endl;
+	//	cout << "\t "<< nowX1 << " " << nowX2 << endl <<"show find Y: " << endl;
 		while (findY != NULL)
 		{
-			if ( (nowX1 >= findY->getStartX() && nowX2 <= findY->getEndX()) || ( nowX1 <= findY->getStartX() && nowX2 > findY->getEndX()) || (nowX2 > findY->getStartX() && nowX2 < findY->getEndX()))
+			if ( (nowX1 >= findY->getStartX() && nowX2 <= findY->getEndX()) || ( nowX1 <= findY->getStartX() && nowX2 >= findY->getEndX()) || (nowX2 > findY->getStartX() && nowX2 < findY->getEndX()))
 			{
 				if (findY->getY() > nowY1)
 				{
@@ -853,10 +853,10 @@ void Floorplanner::packingNode2Floorplan(Contour* dummy, Node* current, BstarTre
 		int nowY1 = 0;
 		// nowY1 = the maximum y of [nowx1,nowX2)
 		Contour* findY = dummy;
-		cout << "\t "<< nowX1 << " " << nowX2 << endl <<"show find Y: " << endl;
+//		cout << "\t "<< nowX1 << " " << nowX2 << endl <<"show find Y: " << endl;
 		while (findY != NULL)
 		{
-			if ((nowX1 >= findY->getStartX() && nowX2 <= findY->getEndX()) ||( nowX1 <= findY->getStartX() && nowX2 > findY->getEndX()) || (nowX2 > findY->getStartX() && nowX2 < findY->getEndX()))
+			if ((nowX1 >= findY->getStartX() && nowX2 <= findY->getEndX()) ||( nowX1 <= findY->getStartX() && nowX2 >= findY->getEndX()) || (nowX2 > findY->getStartX() && nowX2 < findY->getEndX()))
 			{
 				if (findY->getY() > nowY1)
 				{
@@ -908,7 +908,7 @@ void Floorplanner::packingNode2Floorplan(Contour* dummy, Node* current, BstarTre
 			tmpNode = tmpNode->getNext();
 		}
 	}
-	reportContour(dummy);
+//	reportContour(dummy);
 	if (current->getLeftChild() != NULL)
 	{
 		packingNode2Floorplan(dummy, current->getLeftChild(), tree);
